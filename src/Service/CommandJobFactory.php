@@ -30,12 +30,13 @@ class CommandJobFactory
      * @param array $params
      * @param int|null $entityId - Entity ID
      * @param string|null $entityClassName - Entity class name (self:class)
+     * @param array|null $envVars - Environment variables
      * @return Job
      * @throws CommandJobException
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public function createCommandJob(string $commandName, array $params, int $entityId = null, string $entityClassName = null): Job
+    public function createCommandJob(string $commandName, array $params, int $entityId = null, string $entityClassName = null, array $envVars = []): Job
     {
         // Check if the same exact job exists, throw exception if it does
         if ($this->entityManager->getRepository(Job::class)->isAlreadyCreated($commandName, $params)) {
@@ -54,7 +55,7 @@ class CommandJobFactory
         $this->entityManager->flush();
 
         // Dispatch the message to the message bus
-        $message = new JobMessage($job->getId());
+        $message = new JobMessage($job->getId(), $envVars);
         $this->messageBus->dispatch($message);
 
         // Return created job

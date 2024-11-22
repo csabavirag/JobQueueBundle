@@ -5,10 +5,12 @@ namespace TomAtom\JobQueueBundle\Message;
 class JobMessage
 {
     private int $jobId;
+    private array $envVars;
 
-    public function __construct(int $jobId)
+    public function __construct(int $jobId, array $envVars)
     {
         $this->jobId = $jobId;
+        $this->envVars = $envVars;
     }
 
     /**
@@ -17,5 +19,10 @@ class JobMessage
     public function getJobId(): int
     {
         return $this->jobId;
+    }
+
+    public function getEnvVars(): array
+    {
+        return $this->envVars;
     }
 }
